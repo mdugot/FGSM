@@ -1,5 +1,13 @@
 #include "vector.h"
 
+Vector Vector::oneHotVector(int numberLabels, int label) {
+	if (label <= 0 || label > numberLabels)
+		throw FgsmException("wrong label for one hot vector");
+	Vector result(numberLabels);
+	result[label - 1] = 1.0;
+	return result;
+}
+
 Vector::Vector(void) : values(NULL), size(0) {}
 
 Vector::Vector(const Vector &from) : size(from.getSize())
@@ -71,6 +79,16 @@ Vector Vector::operator+(Vector const &v2) {
 	Vector result(size);
 	for (int i = 0; i < size; i++) {
 		result[i] = values[i] + v2[i];
+	}
+	return result;
+}
+
+Vector Vector::operator-(Vector const &v2) {
+	if (size != v2.getSize())
+		throw FgsmException("substract vectors of different sizes");
+	Vector result(size);
+	for (int i = 0; i < size; i++) {
+		result[i] = values[i] - v2[i];
 	}
 	return result;
 }

@@ -4,6 +4,7 @@
 #include "matrix.h"
 #include "vector.h"
 #include <list>
+#include <stack>
 
 #define PARAM_FILE "param.txt"
 #define HIDDEN_LAYERS 1
@@ -13,6 +14,8 @@
 
 class Layer
 {
+	friend class NeuralNetwork;
+
 	private:
 
 		Vector biais;
@@ -23,7 +26,7 @@ class Layer
 
 		Layer(std::ifstream &file, int inputSize, int outputSize, bool last = false);
 		~Layer();
-		Vector forward(Vector &input);
+		Vector forward(Vector &input, std::stack<Vector> *outputsStack = NULL);
 };
 
 class NeuralNetwork
@@ -36,8 +39,10 @@ class NeuralNetwork
 
 		NeuralNetwork();
 		~NeuralNetwork();
-		Vector forward(Vector &input);
+		Vector forward(Vector &input, std::stack<Vector> *outputsStack = NULL);
+		Vector backward(const Vector &delta, const Vector &outputs);
 		int predict(Vector &input);
+		Vector fgsm(Vector &input, int label);
 };
 
 #endif

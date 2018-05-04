@@ -57,3 +57,18 @@ void Data::accuracy(NeuralNetwork &nn) {
 	int percent = (double)success / (double)all.size() * 100.0;
 	OUT << "Accuracy : " << percent << "%\n";
 }
+
+void Data::addNoise(NeuralNetwork &nn, double epsilon) {
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		DEBUG << "label : " << it->first << "\n";
+		Vector noise = nn.fgsm(*(it->second), it->first);
+		it->second->addNoise(noise, epsilon);
+	}
+}
+
+void Data::save(std::string foldername) {
+	mkdir(foldername.c_str(), 0777);
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		it->second->save(foldername + "/" + it->second->getFilename());
+	}
+}

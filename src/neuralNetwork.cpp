@@ -16,8 +16,10 @@ Layer::Layer(std::ifstream &file, int inputSize, int outputSize, bool last)
 	}
 }
 
-Vector Layer::forward(Vector &input) {
+Vector Layer::forward(Vector &input, std::stack<Vector> *outputsStack) {
 	Vector result = weights * input + biais;
+	if (outputsStack && !lastLayer)
+		outputsStack->push(result);
 	if (lastLayer)
 		return result.softmax();
 	return result.relu();
@@ -33,7 +35,7 @@ NeuralNetwork::NeuralNetwork() {
 	std::ifstream file(PARAM_FILE);
 	if (!file)
 		throw FgsmException("Can not open parameters file");
-	
+
 	layers = std::list<Layer*>();
 	for (int i = 0; i < HIDDEN_LAYERS + 2 ; i++) {
 		if (i == 0)
@@ -46,17 +48,40 @@ NeuralNetwork::NeuralNetwork() {
 	file.close();
 }
 
-Vector NeuralNetwork::forward(Vector &input) {
-	
+Vector NeuralNetwork::forward(Vector &input, std::stack<Vector> *outputsStack) {
 	Vector tmp = input;
 	for (auto it = layers.begin(); it != layers.end(); ++it) {
-		tmp = (*it)->forward(tmp).relu();
+		tmp = (*it)->forward(tmp, outputsStack);
 	}
 	return tmp;
 }
 
 int NeuralNetwork::predict(Vector &input) {
-	
 	Vector probVector(forward(input)); 
 	return probVector.argmax() + 1;
+}
+
+Vector NeuralNetwork::backward(const Vector &delta, const Vector &output) {
+	Vector result(delta.getSize());
+	for (int i = 0; i < delta.getSize(); i++) {
+		if (output[i] > 0)
+			result[i] = delta[i];
+	}
+	return result;
+}
+
+Vector NeuralNetwork::fgsm(Vector &input, int label) {
+	std::stack<Vector> outputsStack = std::stack<Vector>();
+	Vector oneHotLabels = Vector::oneHotVector(OUTPUT_WIDTH, label);
+	Vector probs = forward(input, &outputsStack);
+	Vector delta = probs - oneHotLabels;
+	for (auto it = layers.rbegin(); it != layers.rend(); ++it) {
+		if (outputsStack.size() > 0) {
+			delta = backward((*it)->weights.transpose() * delta, outputsStack.top());
+			outputsStack.pop();
+		} else {
+			delta = (*it)->weights.transpose() * delta;
+		}
+	}
+	return delta;
 }

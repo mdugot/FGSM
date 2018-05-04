@@ -6,12 +6,15 @@
 
 class Vector
 {
+
 	protected:
 
 		double *values;
 		int size;
 	
 	public:
+
+		static Vector oneHotVector(int numberLabels, int label);
 
 		Vector(void);
 		Vector(const Vector &from);
@@ -27,6 +30,7 @@ class Vector
 
 		double &operator[](int i) const {return values[i];}
 		Vector operator+(Vector const &v2);
+		Vector operator-(Vector const &v2);
 		Vector& operator=(Vector const &v2);
 
 		Vector relu();

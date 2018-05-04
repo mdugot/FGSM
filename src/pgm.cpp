@@ -2,8 +2,17 @@
 
 Pgm::Pgm(void) : Vector(), w(0), h(0), maxWhite(0) {}
 
+Pgm::Pgm(const Pgm &from) : Vector(from) {
+	w = from.getW();
+	h = from.getH();
+	maxWhite = from.getMaxWhite();
+	filename = from.getFilename();
+}
+
 Pgm::Pgm(std::string filename) : Vector() {
 
+	int pos = filename.find_last_of('/');
+	this->filename = filename.substr(pos + 1);
 	std::ifstream file(filename);
 	if (!file)
 		throw FgsmException("Can not open pgm file : " + filename);
@@ -46,4 +55,13 @@ void Pgm::save(std::string filename) {
 		file << "\r\n";
 	}
 	file.close();
+}
+
+void Pgm::addNoise(Vector &noise, double epsilon) {
+	for (int i = 0; i < size; i++) {
+		if (noise[i] > 0)
+			values[i] += epsilon;
+		else
+			values[i] -= epsilon;
+	}
 }
