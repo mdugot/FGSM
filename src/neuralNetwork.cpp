@@ -6,9 +6,9 @@ Layer::~Layer() {
 Layer::Layer(std::ifstream &file, int inputSize, int outputSize, bool last)
 : biais(outputSize), weights(outputSize, inputSize), lastLayer(last)
 {
-	for (int i = 0; i < inputSize; i++) {
-		for (int j = 0; j < outputSize; j++) {
-			file >> weights[j][i];
+	for (int i = 0; i < outputSize; i++) {
+		for (int j = 0; j < inputSize; j++) {
+			file >> weights[i][j];
 		}
 	}
 	for (int i = 0; i < outputSize; i++) {
@@ -58,5 +58,5 @@ Vector NeuralNetwork::forward(Vector &input) {
 int NeuralNetwork::predict(Vector &input) {
 	
 	Vector probVector(forward(input)); 
-	return probVector.argmax();
+	return probVector.argmax() + 1;
 }
