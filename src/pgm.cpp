@@ -89,11 +89,3 @@ Pgm Pgm::binarizedNoise(Vector &noise, double ratio) {
 	}
 	return result;
 }
-
-Pgm Pgm::binarize() {
-	Pgm result = *this;
-	for (int i = 0; i < size; i++) {
-			result[i] = BINARIZE(values[i]);
-	}
-	return result;
-}

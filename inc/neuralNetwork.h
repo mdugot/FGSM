@@ -44,10 +44,10 @@ class NeuralNetwork
 
 		NeuralNetwork();
 		~NeuralNetwork();
-		Vector forward(const Vector &input, std::stack<Vector> *outputsStack = NULL);
+		Vector forward(const Vector &input, bool binarize, std::stack<Vector> *outputsStack = NULL);
 		Vector backward(const Vector &delta, const Vector &outputs);
-		int predict(const Vector &input, double *confidence = NULL);
-		void printPrediction(const Vector &input);
+		int predict(const Vector &input, bool binarize, double *confidence = NULL);
+		void printPrediction(const Vector &input, bool binarize);
 		Vector fgsm(Vector &input, int label);
 
 		Pgm checkAttack(std::pair<int, Pgm*> data, enum ATTACK_TYPE type);

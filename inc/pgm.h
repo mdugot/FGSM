@@ -22,7 +22,6 @@ class Pgm : public Vector
 		void save(std::string filename);
 		Pgm addNoise(Vector &noise, double epsilon = 0.1);
 		Pgm binarizedNoise(Vector &noise, double ratio = 0.01);
-		Pgm binarize();
 
 		int getW() const {return w;}
 		int getH() const {return h;}

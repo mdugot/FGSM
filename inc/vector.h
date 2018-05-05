@@ -36,6 +36,7 @@ class Vector
 
 		Vector relu();
 		Vector softmax();
+		Vector binarize();
 		int argmax(double *v = NULL);
 };
 

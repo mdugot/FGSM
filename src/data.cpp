@@ -45,11 +45,11 @@ Data::~Data() {
 	}
 }
 
-void Data::accuracy(NeuralNetwork &nn) {
+void Data::accuracy(NeuralNetwork &nn, bool binarize) {
 	int success = 0;
 	int prediction;
 	for (auto it = all.begin(); it != all.end(); ++it) {
-		prediction = nn.predict(*(it->second));
+		prediction = nn.predict(*(it->second), binarize);
 		//DEBUG << "prediction " << it->second->getFilename() << " : " << prediction << " vs " << it->first << "\n";
 		if (prediction == it->first)
 			success++;
@@ -84,12 +84,6 @@ void Data::binarizedRandomNoise(double ratio) {
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		Vector noise = Vector::randomVector(it->second->getSize(), -1, 1);
 		*(it->second) = it->second->binarizedNoise(noise, ratio);
-	}
-}
-
-void Data::binarize() {
-	for (auto it = all.begin(); it != all.end(); ++it) {
-		*(it->second) = it->second->binarize();
 	}
 }
 

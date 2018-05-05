@@ -48,22 +48,25 @@ NeuralNetwork::NeuralNetwork() {
 	file.close();
 }
 
-Vector NeuralNetwork::forward(const Vector &input, std::stack<Vector> *outputsStack) {
+Vector NeuralNetwork::forward(const Vector &input, bool binarize, std::stack<Vector> *outputsStack) {
 	Vector tmp = input;
+	if (binarize) {
+		tmp = tmp.binarize();
+	}
 	for (auto it = layers.begin(); it != layers.end(); ++it) {
 		tmp = (*it)->forward(tmp, outputsStack);
 	}
 	return tmp;
 }
 
-int NeuralNetwork::predict(const Vector &input, double *confidence) {
-	Vector probVector(forward(input)); 
+int NeuralNetwork::predict(const Vector &input, bool binarize, double *confidence) {
+	Vector probVector(forward(input, binarize)); 
 	return probVector.argmax(confidence) + 1;
 }
 
-void NeuralNetwork::printPrediction(const Vector &input) {
+void NeuralNetwork::printPrediction(const Vector &input, bool binarize) {
 	double confidence = 0;
-	int label = predict(input, &confidence);
+	int label = predict(input, binarize, &confidence);
 	printf("predict label %d (confidence : %.3f)\n", label, confidence);
 }
 
@@ -100,28 +103,27 @@ Pgm NeuralNetwork::checkAttack(std::pair<int, Pgm*> data, enum ATTACK_TYPE type)
 	OUT << "file : " << input.getFilename() << "\n";
 	OUT << "Expected label : " << label << "\n";
 	OUT << "Before attack : ";
-	printPrediction(input);
+	printPrediction(input, false);
 
 	Pgm attackInput = attack(input, label, type);
 	OUT << "After attack (without binarize protection) : ";
-	printPrediction(attackInput);
+	printPrediction(attackInput, false);
 
 	OUT << "After attack (with binarize protection) : ";
-	printPrediction(attackInput.binarize());
+	printPrediction(attackInput, true);
 	return attackInput;
 }
 
 void NeuralNetwork::checkAttack(Data &data, enum ATTACK_TYPE type) {
 	OUT << "Before attack :\n";
-	data.accuracy(*this);
+	data.accuracy(*this, false);
 	
 	attack(data, type);
 	OUT << "After attack (without binarize protection) :\n";
-	data.accuracy(*this);
+	data.accuracy(*this, false);
 
-	data.binarize();
 	OUT << "After attack (with binarize protection) :\n";
-	data.accuracy(*this);
+	data.accuracy(*this, true);
 }
 
 Vector NeuralNetwork::backward(const Vector &delta, const Vector &output) {
@@ -136,7 +138,7 @@ Vector NeuralNetwork::backward(const Vector &delta, const Vector &output) {
 Vector NeuralNetwork::fgsm(Vector &input, int label) {
 	std::stack<Vector> outputsStack = std::stack<Vector>();
 	Vector oneHotLabels = Vector::oneHotVector(OUTPUT_WIDTH, label);
-	Vector probs = forward(input, &outputsStack);
+	Vector probs = forward(input, false, &outputsStack);
 	Vector delta = probs - oneHotLabels;
 	for (auto it = layers.rbegin(); it != layers.rend(); ++it) {
 		if (outputsStack.size() > 0) {

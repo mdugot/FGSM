@@ -23,12 +23,11 @@ class Data
 		~Data();
 
 		int size() {return all.size();}
-		void accuracy(NeuralNetwork &nn);
+		void accuracy(NeuralNetwork &nn, bool binarize);
 		void addNoise(NeuralNetwork &nn, double epsilon = 0.1);
 		void randomNoise(double epsilon = 0.1);
 		void binarizedNoise(NeuralNetwork &nn, double ratio = 0.01);
 		void binarizedRandomNoise(double ratio = 0.01);
-		void binarize();
 		void save(std::string foldername);
 
 		std::pair<int, Pgm*> randomData();
