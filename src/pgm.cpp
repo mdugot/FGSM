@@ -13,7 +13,7 @@ Pgm::Pgm(std::string filename) : Vector() {
 
 	int pos = filename.find_last_of('/');
 	this->filename = filename.substr(pos + 1);
-	std::ifstream file(filename);
+	std::ifstream file(filename, std::ios::in);
 	if (!file)
 		throw FgsmException("Can not open pgm file : " + filename);
 	std::string tmp;
@@ -34,7 +34,7 @@ Pgm::~Pgm() {
 }
 
 void Pgm::save(std::string filename) {
-	std::ofstream file(filename);
+	std::ofstream file(filename, std::ios::out);
 	if (!file)
 		throw FgsmException("Can not open pgm file : " + filename);
 	file << "P2\r\n";
@@ -57,11 +57,43 @@ void Pgm::save(std::string filename) {
 	file.close();
 }
 
-void Pgm::addNoise(Vector &noise, double epsilon) {
+Pgm Pgm::addNoise(Vector &noise, double epsilon) {
+	Pgm result = *this;
 	for (int i = 0; i < size; i++) {
 		if (noise[i] > 0)
-			values[i] += epsilon;
+			result[i] += epsilon;
 		else
-			values[i] -= epsilon;
+			result[i] -= epsilon;
 	}
+	return result;
+}
+
+Pgm Pgm::binarizedNoise(Vector &noise, double ratio) {
+
+	Pgm result = *this;
+	std::map<double, int> sortedNoiseIndex = std::map<double, int>();
+	for (int i = 0; i < size; i++) {
+		sortedNoiseIndex.insert(std::pair<double, int>(ABS(noise[i]), i));
+	}
+
+	int noisePixels = (double)size * (double)ratio;
+	int count = 0;
+	for (auto it = sortedNoiseIndex.rbegin(); it != sortedNoiseIndex.rend(); ++it) {
+		int p = (noise[it->second] >= 0 ? 1.0 : 0.0);
+		if (p != result[it->second]) {
+			result[it->second] = p;
+			count++;
+			if (count >= noisePixels)
+				break;
+		}
+	}
+	return result;
+}
+
+Pgm Pgm::binarize() {
+	Pgm result = *this;
+	for (int i = 0; i < size; i++) {
+			result[i] = BINARIZE(values[i]);
+	}
+	return result;
 }

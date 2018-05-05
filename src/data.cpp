@@ -1,4 +1,5 @@
 #include "data.h"
+#include "neuralNetwork.h"
 
 bool isPgmFile(std::string filename) {
 	if (filename[0] == '.')
@@ -49,7 +50,7 @@ void Data::accuracy(NeuralNetwork &nn) {
 	int prediction;
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		prediction = nn.predict(*(it->second));
-		//DEBUG << "prediction : " << prediction << " vs " << it->first << "\n";
+		//DEBUG << "prediction " << it->second->getFilename() << " : " << prediction << " vs " << it->first << "\n";
 		if (prediction == it->first)
 			success++;
 	}
@@ -60,15 +61,56 @@ void Data::accuracy(NeuralNetwork &nn) {
 
 void Data::addNoise(NeuralNetwork &nn, double epsilon) {
 	for (auto it = all.begin(); it != all.end(); ++it) {
-		DEBUG << "label : " << it->first << "\n";
 		Vector noise = nn.fgsm(*(it->second), it->first);
-		it->second->addNoise(noise, epsilon);
+		*(it->second) = it->second->addNoise(noise, epsilon);
+	}
+}
+
+void Data::randomNoise(double epsilon) {
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		Vector noise = Vector::randomVector(it->second->getSize(), -1, 1);
+		*(it->second) = it->second->addNoise(noise, epsilon);
+	}
+}
+
+void Data::binarizedNoise(NeuralNetwork &nn, double ratio) {
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		Vector noise = nn.fgsm(*(it->second), it->first);
+		*(it->second) = it->second->binarizedNoise(noise, ratio);
+	}
+}
+
+void Data::binarizedRandomNoise(double ratio) {
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		Vector noise = Vector::randomVector(it->second->getSize(), -1, 1);
+		*(it->second) = it->second->binarizedNoise(noise, ratio);
+	}
+}
+
+void Data::binarize() {
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		*(it->second) = it->second->binarize();
 	}
 }
 
 void Data::save(std::string foldername) {
-	mkdir(foldername.c_str(), 0777);
+	mkdir(foldername.c_str(), 0755);
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		it->second->save(foldername + "/" + it->second->getFilename());
 	}
+}
+
+std::pair<int, Pgm*> Data::randomData() {
+	auto it = all.begin();
+	int r = rand() % all.size();
+	std::advance(it, r);
+	return std::pair<int, Pgm*>(it->first, it->second);
+}
+
+std::pair<int, Pgm*> Data::findData(std::string name) {
+	for (auto it = all.begin(); it != all.end(); ++it) {
+		if (it->second->getFilename() == name)
+			return std::pair<int, Pgm*>(it->first, it->second);
+	}
+	throw FgsmException("Data not found : " + name);
 }

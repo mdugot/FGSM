@@ -2,6 +2,7 @@
 #define PGM_H
 
 #include "vector.h"
+#include <map>
 
 class Pgm : public Vector
 {
@@ -19,7 +20,9 @@ class Pgm : public Vector
 		~Pgm();
 
 		void save(std::string filename);
-		void addNoise(Vector &noise, double epsilon = 0.1);
+		Pgm addNoise(Vector &noise, double epsilon = 0.1);
+		Pgm binarizedNoise(Vector &noise, double ratio = 0.01);
+		Pgm binarize();
 
 		int getW() const {return w;}
 		int getH() const {return h;}

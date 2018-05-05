@@ -48,7 +48,7 @@ NeuralNetwork::NeuralNetwork() {
 	file.close();
 }
 
-Vector NeuralNetwork::forward(Vector &input, std::stack<Vector> *outputsStack) {
+Vector NeuralNetwork::forward(const Vector &input, std::stack<Vector> *outputsStack) {
 	Vector tmp = input;
 	for (auto it = layers.begin(); it != layers.end(); ++it) {
 		tmp = (*it)->forward(tmp, outputsStack);
@@ -56,9 +56,72 @@ Vector NeuralNetwork::forward(Vector &input, std::stack<Vector> *outputsStack) {
 	return tmp;
 }
 
-int NeuralNetwork::predict(Vector &input) {
+int NeuralNetwork::predict(const Vector &input, double *confidence) {
 	Vector probVector(forward(input)); 
-	return probVector.argmax() + 1;
+	return probVector.argmax(confidence) + 1;
+}
+
+void NeuralNetwork::printPrediction(const Vector &input) {
+	double confidence = 0;
+	int label = predict(input, &confidence);
+	printf("predict label %d (confidence : %.3f)\n", label, confidence);
+}
+
+Pgm NeuralNetwork::attack(Pgm &input, int label, enum ATTACK_TYPE type) {
+	Vector noise;
+
+	if (type == FGSM_NOISE || type == FGSM_B_NOISE)
+		noise = fgsm(input, label);
+	else
+		noise = Vector::randomVector(input.getSize(), -1, 1);
+
+	if (type == FGSM_NOISE || type == RANDOM_NOISE)
+		return input.addNoise(noise);
+	else
+		return input.binarizedNoise(noise);
+}
+
+void NeuralNetwork::attack(Data &data, enum ATTACK_TYPE type) {
+	Vector noise;
+
+	if (type == FGSM_NOISE)
+		data.addNoise(*this);
+	else if (type  == FGSM_B_NOISE)
+		data.binarizedNoise(*this);
+	else if (type == RANDOM_NOISE)
+		data.randomNoise();
+	else
+		data.binarizedRandomNoise();
+}
+
+Pgm NeuralNetwork::checkAttack(std::pair<int, Pgm*> data, enum ATTACK_TYPE type) {
+	Pgm input = *data.second;
+	int label = data.first;
+	OUT << "file : " << input.getFilename() << "\n";
+	OUT << "Expected label : " << label << "\n";
+	OUT << "Before attack : ";
+	printPrediction(input);
+
+	Pgm attackInput = attack(input, label, type);
+	OUT << "After attack (without binarize protection) : ";
+	printPrediction(attackInput);
+
+	OUT << "After attack (with binarize protection) : ";
+	printPrediction(attackInput.binarize());
+	return attackInput;
+}
+
+void NeuralNetwork::checkAttack(Data &data, enum ATTACK_TYPE type) {
+	OUT << "Before attack :\n";
+	data.accuracy(*this);
+	
+	attack(data, type);
+	OUT << "After attack (without binarize protection) :\n";
+	data.accuracy(*this);
+
+	data.binarize();
+	OUT << "After attack (with binarize protection) :\n";
+	data.accuracy(*this);
 }
 
 Vector NeuralNetwork::backward(const Vector &delta, const Vector &output) {

@@ -15,6 +15,7 @@ class Vector
 	public:
 
 		static Vector oneHotVector(int numberLabels, int label);
+		static Vector randomVector(int size, double min, double max);
 
 		Vector(void);
 		Vector(const Vector &from);
@@ -35,7 +36,7 @@ class Vector
 
 		Vector relu();
 		Vector softmax();
-		int argmax();
+		int argmax(double *v = NULL);
 };
 
 #endif

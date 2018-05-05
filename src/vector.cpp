@@ -8,6 +8,16 @@ Vector Vector::oneHotVector(int numberLabels, int label) {
 	return result;
 }
 
+Vector Vector::randomVector(int size, double min, double max) {
+	Vector result(size);
+	double r;
+	for (int i = 0; i < size; i++) {
+		r = min + ((double)rand() / (double)RAND_MAX) * (max - min);
+		result[i] = r;
+	}
+	return result;
+}
+
 Vector::Vector(void) : values(NULL), size(0) {}
 
 Vector::Vector(const Vector &from) : size(from.getSize())
@@ -128,7 +138,7 @@ Vector Vector::softmax() {
 	return result;
 }
 
-int Vector::argmax() {
+int Vector::argmax(double *v) {
 	double max = std::numeric_limits<double>::lowest();
 	int result = 0;
 	for (int i = 0; i < size; i++) {
@@ -137,5 +147,7 @@ int Vector::argmax() {
 			result = i;
 		}
 	}
+	if (v)
+		*v = max;
 	return result;
 }
