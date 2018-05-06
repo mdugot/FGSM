@@ -20,4 +20,17 @@
 #define SIGN(x) (x >= 0 ? 1 : -1)
 #define BINARIZE(x) (x >= 0.5 ? 1 : 0)
 
+#define DOUBLE_EPSILON 0.000001
+
+class FgsmException;
+
+enum ATTACK_TYPE {
+	FGSM_NOISE, RANDOM_NOISE, FGSM_B_NOISE, RANDOM_B_NOISE
+};
+
+void test(bool result, std::string message);
+void unitest();
+enum ATTACK_TYPE getAttackType(std::string arg);
+void help();
+
 #endif

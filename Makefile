@@ -8,6 +8,8 @@ SRC_NAME= main.cpp\
 		  pgm.cpp\
 		  data.cpp\
 		  neuralNetwork.cpp\
+		  tools.cpp\
+		  unitest.cpp\
 		  fgsmException.cpp
 SRC_PATH= ./src/
 INC_PATH= ./inc/

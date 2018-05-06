@@ -27,7 +27,9 @@ class Vector
 
 		double getMax();
 		double getMin();
+		double sum();
 		int getSize() const {return size;}
+		double get(int i) const {return values[i];}
 
 		double &operator[](int i) const {return values[i];}
 		Vector operator+(Vector const &v2);
@@ -39,5 +41,8 @@ class Vector
 		Vector binarize();
 		int argmax(double *v = NULL);
 };
+
+bool operator== (const Vector &v1, const Vector &v2);
+bool operator!= (const Vector &v1, const Vector &v2);
 
 #endif

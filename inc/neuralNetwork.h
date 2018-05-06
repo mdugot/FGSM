@@ -13,10 +13,6 @@
 #define HIDDEN_WIDTH 256
 #define OUTPUT_WIDTH 23
 
-enum ATTACK_TYPE {
-	FGSM_NOISE, RANDOM_NOISE, FGSM_B_NOISE, RANDOM_B_NOISE
-};
-
 class Layer
 {
 	friend class NeuralNetwork;

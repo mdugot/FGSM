@@ -1,5 +1,23 @@
 #include "matrix.h"
 
+bool operator== (const Matrix &m1, const Matrix &m2) {
+	if (m1.rowSize() != m2.rowSize())
+		return false;
+	if (m1.columnSize() != m2.columnSize())
+		return false;
+	for (int i = 0; i < m1.rowSize(); i++) {
+		for (int j = 0; j < m1.columnSize(); j++) {
+			if (ABS(m1.get(i,j) - m2.get(i,j)) > DOUBLE_EPSILON)
+				return false;
+		}
+	}
+	return true;
+}
+
+bool operator!= (const Matrix &m1, const Matrix &m2) {
+	return !(m1 == m2);
+}
+
 Matrix::Matrix(const Matrix &from) : rows(from.rowSize()), columns(from.columnSize())
 {
 	this->values = new double*[rows];

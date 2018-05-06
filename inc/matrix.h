@@ -36,4 +36,7 @@ class Matrix
 		Matrix transpose();
 };
 
+bool operator== (const Matrix &m1, const Matrix &m2);
+bool operator!= (const Matrix &m1, const Matrix &m2);
+
 #endif

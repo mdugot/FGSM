@@ -1,5 +1,21 @@
 #include "vector.h"
 
+
+bool operator== (const Vector &v1, const Vector &v2) {
+	if (v1.getSize() != v2.getSize())
+		return false;
+	for (int i = 0; i < v1.getSize(); i++) {
+		if (ABS(v1.get(i) - v2.get(i)) > DOUBLE_EPSILON) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool operator!= (const Vector &v1, const Vector &v2) {
+	return !(v1 == v2);
+}
+
 Vector Vector::oneHotVector(int numberLabels, int label) {
 	if (label <= 0 || label > numberLabels)
 		throw FgsmException("wrong label for one hot vector");
@@ -150,6 +166,14 @@ int Vector::argmax(double *v) {
 	if (v)
 		*v = max;
 	return result;
+}
+
+double Vector::sum() {
+	double r = 0;
+	for (int i = 0; i < size; i++) {
+		r += values[i];
+	}
+	return r;
 }
 
 Vector Vector::binarize() {
