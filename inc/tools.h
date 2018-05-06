@@ -32,5 +32,6 @@ void test(bool result, std::string message);
 void unitest();
 enum ATTACK_TYPE getAttackType(std::string arg);
 void help();
+void usage();
 
 #endif

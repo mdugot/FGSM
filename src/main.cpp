@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 		enum ATTACK_TYPE type = FGSM_NOISE;
 		std::string target = "all";
 		std::string saveTo = "";
-  		while ((c = getopt (argc, argv, "r:e:a:t:s:u")) != -1) {
+  		while ((c = getopt(argc, argv, "r:e:a:t:s:uh")) != -1) {
 			switch (c) {
 				case 'a':
 					type = getAttackType(optarg);
@@ -25,20 +25,32 @@ int main(int argc, char **argv) {
 					saveTo = optarg;
 				break;
 				case 'e':
-					Pgm::epsilon = std::stod(optarg);
+					try {
+						Pgm::epsilon = std::stod(optarg);
+					} catch (std::invalid_argument e) {
+						throw FgsmException("-e option has to be a number.");
+					}
 				break;
 				case 'r':
-					Pgm::ratio = std::stod(optarg);
+					try {
+						Pgm::ratio = std::stod(optarg);
+					} catch (std::invalid_argument e) {
+						throw FgsmException("-r option has to be a number.");
+					}
+				break;
+				case 'h':
+					help();
+					return 0;
 				break;
 				case '?':
 				default:
-					help();
+					usage();
 					return 1;
 				break;
 			}
 		}
 		if (optind < argc) {
-			help();
+			usage();
 			return 1;
 		}
 		Data data("./pgm");
