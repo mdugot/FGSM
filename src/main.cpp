@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 		enum ATTACK_TYPE type = FGSM_NOISE;
 		std::string target = "all";
 		std::string saveTo = "";
-  		while ((c = getopt (argc, argv, "a:t:s:u")) != -1) {
+  		while ((c = getopt (argc, argv, "r:e:a:t:s:u")) != -1) {
 			switch (c) {
 				case 'a':
 					type = getAttackType(optarg);
@@ -23,6 +23,12 @@ int main(int argc, char **argv) {
 				break;
 				case 's':
 					saveTo = optarg;
+				break;
+				case 'e':
+					Pgm::epsilon = std::stod(optarg);
+				break;
+				case 'r':
+					Pgm::ratio = std::stod(optarg);
 				break;
 				case '?':
 				default:

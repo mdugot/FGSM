@@ -9,6 +9,7 @@ void help() {
 	ERR << "random          : generate random noise\n";
 	ERR << "random-binarize : switch (0 to 1 or 1 to 0) randomly 1% of the inputs\n";
 	ERR << "fgsm-binarize   : use Gradient Descent to get inputs gradients then switch the 1% steepest inputs\n";
+	ERR << "none            : No attack, print only original accuracy or prediction\n";
 	ERR << "\n-t\n";
 	ERR << "all        : (DEFAULT) check all the images in the 'pgm' directory\n";
 	ERR << "random     : pick a random image file in the 'pgm' directory\n";
@@ -30,6 +31,8 @@ enum ATTACK_TYPE getAttackType(std::string arg) {
 		return RANDOM_NOISE;
 	else if (arg == "random-binarize")
 		return RANDOM_B_NOISE;
+	else if (arg == "none")
+		return NO_ATTACK;
 	throw FgsmException("attack type not recognize. Possible choices : fgsm, fgsm-binarize, random, random-binarize.");
 }
 

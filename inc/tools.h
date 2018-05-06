@@ -25,7 +25,7 @@
 class FgsmException;
 
 enum ATTACK_TYPE {
-	FGSM_NOISE, RANDOM_NOISE, FGSM_B_NOISE, RANDOM_B_NOISE
+	FGSM_NOISE, RANDOM_NOISE, FGSM_B_NOISE, RANDOM_B_NOISE, NO_ATTACK
 };
 
 void test(bool result, std::string message);

@@ -102,8 +102,11 @@ Pgm NeuralNetwork::checkAttack(std::pair<int, Pgm*> data, enum ATTACK_TYPE type)
 	int label = data.first;
 	OUT << "file : " << input.getFilename() << "\n";
 	OUT << "Expected label : " << label << "\n";
-	OUT << "Before attack : ";
+	if (type != NO_ATTACK)
+		OUT << "Before attack : ";
 	printPrediction(input, false);
+	if (type == NO_ATTACK)
+		return input;
 
 	Pgm attackInput = attack(input, label, type);
 	OUT << "After attack (without binarize protection) : ";
@@ -115,8 +118,11 @@ Pgm NeuralNetwork::checkAttack(std::pair<int, Pgm*> data, enum ATTACK_TYPE type)
 }
 
 void NeuralNetwork::checkAttack(Data &data, enum ATTACK_TYPE type) {
-	OUT << "Before attack :\n";
+	if (type != NO_ATTACK)
+		OUT << "Before attack :\n";
 	data.accuracy(*this, false);
+	if (type == NO_ATTACK)
+		return;
 	
 	attack(data, type);
 	OUT << "After attack (without binarize protection) :\n";

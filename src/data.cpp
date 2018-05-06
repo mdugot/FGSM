@@ -59,31 +59,31 @@ void Data::accuracy(NeuralNetwork &nn, bool binarize) {
 	OUT << "Accuracy : " << percent << "%\n";
 }
 
-void Data::addNoise(NeuralNetwork &nn, double epsilon) {
+void Data::addNoise(NeuralNetwork &nn) {
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		Vector noise = nn.fgsm(*(it->second), it->first);
-		*(it->second) = it->second->addNoise(noise, epsilon);
+		*(it->second) = it->second->addNoise(noise);
 	}
 }
 
-void Data::randomNoise(double epsilon) {
+void Data::randomNoise() {
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		Vector noise = Vector::randomVector(it->second->getSize(), -1, 1);
-		*(it->second) = it->second->addNoise(noise, epsilon);
+		*(it->second) = it->second->addNoise(noise);
 	}
 }
 
-void Data::binarizedNoise(NeuralNetwork &nn, double ratio) {
+void Data::binarizedNoise(NeuralNetwork &nn) {
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		Vector noise = nn.fgsm(*(it->second), it->first);
-		*(it->second) = it->second->binarizedNoise(noise, ratio);
+		*(it->second) = it->second->binarizedNoise(noise);
 	}
 }
 
-void Data::binarizedRandomNoise(double ratio) {
+void Data::binarizedRandomNoise() {
 	for (auto it = all.begin(); it != all.end(); ++it) {
 		Vector noise = Vector::randomVector(it->second->getSize(), -1, 1);
-		*(it->second) = it->second->binarizedNoise(noise, ratio);
+		*(it->second) = it->second->binarizedNoise(noise);
 	}
 }
 

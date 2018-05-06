@@ -1,5 +1,8 @@
 #include "pgm.h"
 
+double Pgm::epsilon = 0.1;
+double Pgm::ratio = 0.01;
+
 Pgm::Pgm(void) : Vector(), w(0), h(0), maxWhite(0) {}
 
 Pgm::Pgm(const Pgm &from) : Vector(from) {
@@ -57,7 +60,7 @@ void Pgm::save(std::string filename) {
 	file.close();
 }
 
-Pgm Pgm::addNoise(Vector &noise, double epsilon) {
+Pgm Pgm::addNoise(Vector &noise) {
 	Pgm result = *this;
 	for (int i = 0; i < size; i++) {
 		if (noise[i] > 0)
@@ -68,7 +71,7 @@ Pgm Pgm::addNoise(Vector &noise, double epsilon) {
 	return result;
 }
 
-Pgm Pgm::binarizedNoise(Vector &noise, double ratio) {
+Pgm Pgm::binarizedNoise(Vector &noise) {
 
 	Pgm result = *this;
 	std::map<double, int> sortedNoiseIndex = std::map<double, int>();
@@ -79,12 +82,12 @@ Pgm Pgm::binarizedNoise(Vector &noise, double ratio) {
 	int noisePixels = (double)size * (double)ratio;
 	int count = 0;
 	for (auto it = sortedNoiseIndex.rbegin(); it != sortedNoiseIndex.rend(); ++it) {
+		if (count >= noisePixels)
+			break;
 		int p = (noise[it->second] >= 0 ? 1.0 : 0.0);
 		if (p != result[it->second]) {
 			result[it->second] = p;
 			count++;
-			if (count >= noisePixels)
-				break;
 		}
 	}
 	return result;
