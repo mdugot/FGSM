@@ -9,6 +9,7 @@
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
+#include <unistd.h>
 #define PRINT_DEBUG true
 #define DEBUG if (PRINT_DEBUG) std::cerr
 #define PRINT_OUT true

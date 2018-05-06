@@ -3,20 +3,20 @@
 
 void help() {
 	ERR << "\nUSAGE\n";
-	ERR << "./attack <type> <target> [<save to>]\n";
-	ERR << "\nTYPE\n";
-	ERR << "fgsm            : generate noise with the Fast Gradient Sign Method\n";
+	ERR << "./attack [-a <type>] [-t <target>] [-s <save to>]\n";
+	ERR << "\n-a\n";
+	ERR << "fgsm            : (DEFAULT) generate noise with the Fast Gradient Sign Method\n";
 	ERR << "random          : generate random noise\n";
 	ERR << "random-binarize : switch (0 to 1 or 1 to 0) randomly 1% of the inputs\n";
 	ERR << "fgsm-binarize   : use Gradient Descent to get inputs gradients then switch the 1% steepest inputs\n";
-	ERR << "\nTARGET\n";
+	ERR << "\n-t\n";
+	ERR << "all        : (DEFAULT) check all the images in the 'pgm' directory\n";
 	ERR << "random     : pick a random image file in the 'pgm' directory\n";
-	ERR << "all        : check all the images in the 'pgm' directory\n";
 	ERR << "<filename> : select a specific file\n\n";
-	ERR << "\nSAVE TO (optional)\n";
+	ERR << "\n-s\n";
 	ERR << "If target is 'all', indicate the repertory where to save all the modified images.\n";
 	ERR << "Else, indicate the file name used to save the target image.\n";
-	ERR << "If not present, the modified image(s) are not saved.\n\n";
+	ERR << "If not present, by default, the modified image(s) are not saved.\n\n";
 }
 
 enum ATTACK_TYPE getAttackType(std::string arg) {
@@ -34,21 +34,35 @@ enum ATTACK_TYPE getAttackType(std::string arg) {
 int main(int argc, char **argv) {
 
 	try {
+		int c;
 		srand(time(NULL));
-		Data data("./pgm");
-		NeuralNetwork nn;
-
-		if (argc < 3 || argc > 4) {
+		enum ATTACK_TYPE type = FGSM_NOISE;
+		std::string target = "all";
+		std::string saveTo = "";
+  		while ((c = getopt (argc, argv, "a:t:s:")) != -1) {
+			switch (c) {
+				case 'a':
+					type = getAttackType(optarg);
+				break;
+				case 't':
+					target = optarg;
+				break;
+				case 's':
+					saveTo = optarg;
+				break;
+				case '?':
+				default:
+					help();
+					return 1;
+				break;
+			}
+		}
+		if (optind < argc) {
 			help();
 			return 1;
 		}
-
-		enum ATTACK_TYPE type = getAttackType(argv[1]);
-		std::string target(argv[2]);
-		std::string saveTo("");
-		if (argc == 4)
-			saveTo = argv[3];
-		
+		Data data("./pgm");
+		NeuralNetwork nn;
 		if (target == "all") {
 			nn.checkAttack(data, type);
 			if (saveTo.size() > 0) {
@@ -66,7 +80,6 @@ int main(int argc, char **argv) {
 				modified.save(saveTo);
 			}
 		}
-		
 		return 0;
 	} catch (FgsmException e) {
 		ERR << "ERROR - " << e.what() << "\n";
