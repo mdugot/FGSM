@@ -35,7 +35,7 @@ none            : No attack, print only original accuracy or prediction
 -t <target>
 all        : (DEFAULT) check all the images in the 'pgm' directory
 random     : pick a random image file in the 'pgm' directory
-<filename> : select a specific file
+<filename> : select a specific file (example: '-t 12.pgm')
 
 -s <save to>
 If target is 'all', indicate the repertory where to save all the modified images.

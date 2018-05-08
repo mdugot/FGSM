@@ -16,7 +16,7 @@ void help() {
 	ERR << "\n-t <target>\n";
 	ERR << "all        : (DEFAULT) check all the images in the 'pgm' directory\n";
 	ERR << "random     : pick a random image file in the 'pgm' directory\n";
-	ERR << "<filename> : select a specific file\n";
+	ERR << "<filename> : select a specific file (example: '-t 12.pgm')\n";
 	ERR << "\n-s <save to>\n";
 	ERR << "If target is 'all', indicate the repertory where to save all the modified images.\n";
 	ERR << "Else, indicate the file name used to save the target image.\n";

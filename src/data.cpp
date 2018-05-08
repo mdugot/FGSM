@@ -54,7 +54,7 @@ void Data::accuracy(NeuralNetwork &nn, bool binarize) {
 		if (prediction == it->first)
 			success++;
 	}
-	OUT << "Succes : " << success << " / " << all.size() << "\n";
+	OUT << "Success : " << success << " / " << all.size() << "\n";
 	int percent = (double)success / (double)all.size() * 100.0;
 	OUT << "Accuracy : " << percent << "%\n";
 }
