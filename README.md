@@ -1,7 +1,8 @@
 SUMMARY :
 
-This program has been developed on OS X El Capitan Version 10.11.5.
-The source program is written in C++11.
+This program has been developed as part of an internship programm screening task.  
+The source program is written in C++11.  
+The FGSM (Fast Gradient Sign Method) is used to attack an images classifier adding small noise to the input images.   
 
 HOW TO BUILD :  
   
@@ -29,7 +30,7 @@ usage :
 fgsm            : (DEFAULT) generate noise with the Fast Gradient Sign Method  
 random          : generate random noise  
 random-binarize : reverse (0 to 1 or 1 to 0) randomly a small proportion of the inputs  
-fgsm-binarize   : use Gradient Descent to get inputs gradients then reverse the steepest inputs  
+fgsm-binarize   : use backpropagation to get inputs gradients then reverse the steepest inputs  
 none            : No attack, print only original accuracy or prediction  
   
 -t <target>  
