@@ -3,7 +3,7 @@
 This program has been developed as part of an internship programm screening task.  
 The source program is written in C++11.  
 The FGSM (Fast Gradient Sign Method) is used to attack an images classifier adding small noise to the input images.   
-![FGSM](fgsmExample.png.PNG)  
+![FGSM](fgsmExample.png)  
 
 # HOW TO BUILD :  
   
